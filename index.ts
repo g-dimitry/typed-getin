@@ -12,11 +12,10 @@ T extends Array<infer U>
         :unknown;
 
 function getIn<
-T,
-KeyValueMap extends NestedKeysValuesOf<T>,
-Path extends keyof KeyValueMap,
-Type = KeyValueMap[Path],
->(object: T, path: Path): Type {
+    T,
+    KeyValueMap extends NestedKeysValuesOf<T>,
+    Path extends keyof KeyValueMap,
+>(object: T, path: Path): KeyValueMap[Path] {
 
 }
 
