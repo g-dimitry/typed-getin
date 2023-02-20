@@ -35,14 +35,10 @@ type NestedKeyTypeMap<
     Keys = T extends readonly any[] ? Extract<keyof T, `${number}`> : keyof T> = UnionToIntersection<NestedKeysValuesOf<T, B, Keys>
 >;
 
-function getIn<
+export function getIn<
     T,
     KeyValueMap extends NestedKeyTypeMap<T>,
     Path extends keyof KeyValueMap,
 >(object: T, path: Path): KeyValueMap[Path] {
     return get(object, path);
 }
-
-const targetObj = [[1,2,3]] as const;
-const final = getIn(targetObj, '[0][1]');
-console.log(final);
