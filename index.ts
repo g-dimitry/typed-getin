@@ -18,15 +18,22 @@ type NestedKeysValuesOf<
                     ? Record<`${Keys}`, T[Keys]> & NestedKeysValuesOf<T[Keys], `${Keys}`>
                     : Record<`${BasePathT}.${Keys}`, T[Keys]> & NestedKeysValuesOf<T[Keys], `${BasePathT}.${Keys}`>
                 : unknown
-            : T extends readonly any[]
-                ? Keys extends (string | number) & keyof T
-                    ? BasePathT extends ''
-                        ? Record<`[${Keys}]`, T[Keys]> & NestedKeysValuesOf<T[Keys], `[${Keys}]`>
-                        : Record<`${BasePathT}[${Keys}]`, T[Keys]> & NestedKeysValuesOf<T[Keys], `${BasePathT}[${Keys}]`>
+            : 
+            T extends readonly any[]
+                ? Keys extends keyof T
+                    ? Keys extends (string | number)
+                        ? BasePathT extends ''
+                            ? Record<`[${Keys}]`, T[Keys]> & NestedKeysValuesOf<T[Keys], `[${Keys}]`>
+                            : Record<`${BasePathT}[${Keys}]`, T[Keys]> & NestedKeysValuesOf<T[Keys], `${BasePathT}[${Keys}]`>
+                        : unknown
                     : unknown
                 : unknown;
 
-type NestedKeyTypeMap<T, B extends string='', Keys = keyof T> = UnionToIntersection<NestedKeysValuesOf<T, B, Keys>>;
+type NestedKeyTypeMap<
+    T,
+    B extends string='',
+    Keys = T extends readonly any[] ? Extract<keyof T, `${number}`> : keyof T> = UnionToIntersection<NestedKeysValuesOf<T, B, Keys>
+>;
 
 function getIn<
     T,
@@ -36,13 +43,6 @@ function getIn<
     return get(object, path);
 }
 
-const targetObj = {
-    a: 1,
-    c: {
-        a: 1,
-        b: ['1',2,3] as const,
-        c: [1,2,3],
-    },
-};
-const final = getIn(targetObj, 'c.c[0]');
+const targetObj = [[1,2,3]] as const;
+const final = getIn(targetObj, '[0][1]');
 console.log(final);
